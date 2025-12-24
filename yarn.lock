@@ -1857,7 +1857,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage/backend-plugin-api@npm:^1.6.0":
+"@backstage/backend-plugin-api@npm:^1.4.4, @backstage/backend-plugin-api@npm:^1.6.0":
   version: 1.6.0
   resolution: "@backstage/backend-plugin-api@npm:1.6.0"
   dependencies:
@@ -2217,7 +2217,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage/core-plugin-api@npm:^1.12.1":
+"@backstage/core-plugin-api@npm:^1.11.1, @backstage/core-plugin-api@npm:^1.12.1":
   version: 1.12.1
   resolution: "@backstage/core-plugin-api@npm:1.12.1"
   dependencies:
@@ -3466,7 +3466,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage/plugin-scaffolder-node@npm:^0.12.2":
+"@backstage/plugin-scaffolder-node@npm:^0.12.0, @backstage/plugin-scaffolder-node@npm:^0.12.2":
   version: 0.12.2
   resolution: "@backstage/plugin-scaffolder-node@npm:0.12.2"
   dependencies:
@@ -10322,6 +10322,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@roadiehq/scaffolder-backend-module-http-request@npm:^5.5.1":
+  version: 5.5.1
+  resolution: "@roadiehq/scaffolder-backend-module-http-request@npm:5.5.1"
+  dependencies:
+    "@backstage/backend-plugin-api": "npm:^1.4.4"
+    "@backstage/core-plugin-api": "npm:^1.11.1"
+    "@backstage/plugin-scaffolder-node": "npm:^0.12.0"
+    cross-fetch: "npm:^4.0.0"
+  checksum: 10c0/16b66be978e0ad4a68a516bee7833261f63cd69dc920d3b7964b4f31e278142e83e5db029529e1734110514a3be2522825ad15499ad9d64f8a2cff1e877c3335
+  languageName: node
+  linkType: hard
+
 "@rollup/plugin-commonjs@npm:^26.0.0":
   version: 26.0.3
   resolution: "@rollup/plugin-commonjs@npm:26.0.3"
@@ -15109,6 +15121,7 @@ __metadata:
     "@backstage/plugin-signals-backend": "npm:^0.3.11"
     "@backstage/plugin-techdocs-backend": "npm:^2.1.3"
     "@internal/plugin-devops-api-backend": "workspace:^"
+    "@roadiehq/scaffolder-backend-module-http-request": "npm:^5.5.1"
     app: "link:../app"
     better-sqlite3: "npm:^12.0.0"
     node-gyp: "npm:^10.0.0"

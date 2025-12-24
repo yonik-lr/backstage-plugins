@@ -44,6 +44,7 @@
     "@backstage/plugin-signals-backend": "^0.3.11",
     "@backstage/plugin-techdocs-backend": "^2.1.3",
     "@internal/plugin-devops-api-backend": "workspace:^",
+    "@roadiehq/scaffolder-backend-module-http-request": "^5.5.1",
     "app": "link:../app",
     "better-sqlite3": "^12.0.0",
     "node-gyp": "^10.0.0",

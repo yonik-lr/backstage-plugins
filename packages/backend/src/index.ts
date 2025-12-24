@@ -66,4 +66,7 @@ backend.add(import('@backstage/plugin-signals-backend'));
 // devops-api plugin
 backend.add(import('@internal/plugin-devops-api-backend'));
 
+// http request module
+backend.add(import('@roadiehq/scaffolder-backend-module-http-request'));
+
 backend.start();

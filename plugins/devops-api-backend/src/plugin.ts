@@ -25,6 +25,10 @@ export const devopsApiBackendPlugin = createBackendPlugin({
           path: '/data',
           allow: 'unauthenticated',
         });
+        httpRouter.addAuthPolicy({
+          path: '/stop',
+          allow: 'unauthenticated',
+        });
         logger.info('DevOps API backend plugin initialized');
       },
     });
