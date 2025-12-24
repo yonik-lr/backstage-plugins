@@ -61,26 +61,30 @@ export async function createRouter(
     }
   });
 
-  router.post('/stop', async (request, response) => {
+  router.post('/stop-ec2', async (request, response) => {
     try {
-      const endpoint = `/latest/envs/${env}/ec2/stop`;
-      const fullUrl = `${devopsApiBaseUrl}${endpoint}?env=${env}`;
       const body = request.body;
       
-      logger.info(`POST /stop - Sending to ${fullUrl}`);
+      if (!body || !body.env) {
+        response.status(400).json({ error: 'env is required' });
+        return;
+      }
       
-      // Validate and normalize instance_names to array
       if (!body || !body.instance_names) {
         response.status(400).json({ error: 'instance_names is required' });
         return;
       }
-      
+
       // Ensure instance_names is an array
       if (!Array.isArray(body.instance_names)) {
         body.instance_names = typeof body.instance_names === 'string' 
           ? [body.instance_names] 
           : [body.instance_names];
       }
+
+      const endpoint = `/latest/envs/${body.env}/ec2/stop`;
+      const fullUrl = `${devopsApiBaseUrl}${endpoint}`;
+      logger.info(`POST /stop-ec2 - Sending to ${fullUrl}`);
       
       const apiResponse = await fetch(fullUrl, {
         method: 'POST',

@@ -42,7 +42,7 @@ spec:
       action: http:backstage:request
       input:
         method: 'POST'
-        path: '/devops-api/stop'
+        path: '/devops-api/stop-ec2'
         headers:
           content-type: 'application/json'
         body:

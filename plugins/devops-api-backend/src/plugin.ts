@@ -26,7 +26,7 @@ export const devopsApiBackendPlugin = createBackendPlugin({
           allow: 'unauthenticated',
         });
         httpRouter.addAuthPolicy({
-          path: '/stop',
+          path: '/stop-ec2',
           allow: 'unauthenticated',
         });
         logger.info('DevOps API backend plugin initialized');
