@@ -3,8 +3,8 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: ec2-instance-action
-  title: EC2 Instances Action
-  description: Start or Stop EC2 Instances
+  title: EC2 Instance Action
+  description: Start or Stop EC2 Instance
 spec:
   owner: devops
   type: service
@@ -19,7 +19,7 @@ spec:
             - 'start'
             - 'stop'
           default: 'start'
-          description: Choose whether to start or stop the EC2 instances
+          description: Choose whether to start or stop the EC2 instance
           ui:autofocus: true
           ui:options:
             rows: 1
@@ -38,16 +38,23 @@ spec:
           ui:autofocus: true
           ui:options:
             rows: 1
-    - title: EC2 Instances
+    - title: EC2 Instance
       properties:
         instanceNames:
-          title: Instance Names
           type: string
-          default: 'yoni-devops'
-          description: The names of the instances you want to perform the action on
           ui:autofocus: true
+          ui:field: SelectFieldFromApi
           ui:options:
-            rows: 1
+            path: 'devops-api/data'
+            arraySelector: '.'  # Since your data is a flat object
+            valueSelector: 'key'  # Use the key (instance name) as the value
+            labelSelector: 'key'  # Show the instance name in the dropdown
+            filterBy:
+              watchField: 'action'  # Watch the 'action' field
+              stateField: 'state'  # Check the 'state' field in each item
+              filterMap:
+                'stop': 'running'  # When action is 'stop', show only instances with state 'running'
+                'start': 'stopped'  # When action is 'start', show only instances with state 'stopped'
 
   steps:
     - id: backstage_post_request

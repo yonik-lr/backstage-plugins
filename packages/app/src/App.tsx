@@ -10,6 +10,8 @@ import {
   catalogImportPlugin,
 } from '@backstage/plugin-catalog-import';
 import { ScaffolderPage, scaffolderPlugin } from '@backstage/plugin-scaffolder';
+import { ScaffolderFieldExtensions } from '@backstage/plugin-scaffolder-react';
+import { SelectFieldFromApiExtension } from './components/scaffolder/SelectFieldFromApiExtension';
 import { orgPlugin } from '@backstage/plugin-org';
 import { SearchPage } from '@backstage/plugin-search';
 import {
@@ -38,6 +40,9 @@ import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/
 import { NotificationsPage } from '@backstage/plugin-notifications';
 import { SignalsDisplay } from '@backstage/plugin-signals';
 import { DevOpsApiPage } from '@internal/plugin-devops-api';
+
+// Register the custom field extension with the scaffolder plugin
+const SelectFieldFromApiFieldExtension = scaffolderPlugin.provide(SelectFieldFromApiExtension);
 
 const app = createApp({
   apis,
@@ -82,7 +87,11 @@ const routes = (
         <ReportIssue />
       </TechDocsAddons>
     </Route>
-    <Route path="/create" element={<ScaffolderPage />} />
+    <Route path="/create" element={<ScaffolderPage />}>
+      <ScaffolderFieldExtensions>
+        <SelectFieldFromApiFieldExtension />
+      </ScaffolderFieldExtensions>
+    </Route>
     <Route path="/api-docs" element={<ApiExplorerPage />} />
     <Route
       path="/catalog-import"
