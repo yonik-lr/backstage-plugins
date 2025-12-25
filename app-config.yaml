@@ -133,5 +133,3 @@ permission:
 # DevOps API configuration
 devopsApi:
   baseUrl: http://localhost:8080
-  # Environment parameter (defaults to 'stage')
-  env: stage

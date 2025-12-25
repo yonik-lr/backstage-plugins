@@ -18,20 +18,11 @@ export async function createRouter(
   
   // Get the DevOps API base URL from config, default to localhost:8080
   const devopsApiBaseUrl = config.getOptionalString('devopsApi.baseUrl') || 'http://localhost:8080';
-  // Get the environment parameter, default to 'stage'
-  const env = config.getOptionalString('devopsApi.env') || 'stage';
-
-  router.get('/health', (_, response) => {
-    logger.info('PONG!');
-    response.json({ status: 'ok' });
-  });
 
   router.get('/data', async (request, response) => {
     try {
       // Get envType from query parameters, request body, or config default
-      const envType = request.query.envType as string || 
-                     request.body?.envType || 
-                     env;
+      const envType = request.query.envType as string || request.body?.envType as string;
       
       // Build the URL with the env parameter
       const endpoint = `/latest/envs/${envType}/ec2/instances`;
