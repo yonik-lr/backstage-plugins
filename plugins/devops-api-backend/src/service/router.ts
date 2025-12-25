@@ -61,6 +61,57 @@ export async function createRouter(
     }
   });
 
+  router.post('/start-ec2', async (request, response) => {
+    try {
+      const body = request.body;
+      
+      if (!body || !body.env) {
+        response.status(400).json({ error: 'env is required' });
+        return;
+      }
+      
+      if (!body || !body.instance_names) {
+        response.status(400).json({ error: 'instance_names is required' });
+        return;
+      }
+
+      // Ensure instance_names is an array
+      if (!Array.isArray(body.instance_names)) {
+        body.instance_names = typeof body.instance_names === 'string' 
+          ? [body.instance_names] 
+          : [body.instance_names];
+      }
+
+      const endpoint = `/latest/envs/${body.env}/ec2/start`;
+      const fullUrl = `${devopsApiBaseUrl}${endpoint}`;
+      logger.info(`POST /start-ec2 - Sending to ${fullUrl}`);
+      
+      const apiResponse = await fetch(fullUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      if (!apiResponse.ok) {
+        const errorText = await apiResponse.text();
+        logger.error(`DevOps API error: ${apiResponse.status} - ${errorText}`);
+        response.status(apiResponse.status).json({
+          error: `DevOps API returned ${apiResponse.status}: ${errorText}`,
+        });
+        return;
+      }
+
+      const data = await apiResponse.json().catch(() => ({}));
+      logger.info('Successfully sent POST request to DevOps API');
+      response.json(data);
+    } catch (error) {
+      logger.error(`Error calling DevOps API: ${error}`);
+      response.status(500).json({
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+      });
+    }
+  });
+
   router.post('/stop-ec2', async (request, response) => {
     try {
       const body = request.body;

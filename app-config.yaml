@@ -99,6 +99,11 @@ catalog:
         - allow: [Template]
 
     - type: file
+      target: ../../yoni-templates/start-ec2-template.yaml
+      rules:
+        - allow: [Template]
+
+    - type: file
       target: ../../yoni-templates/stop-ec2-template.yaml
       rules:
         - allow: [Template]
