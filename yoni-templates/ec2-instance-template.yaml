@@ -46,6 +46,8 @@ spec:
           ui:options:
             rows: 1
     - title: Instance Selection
+      required:
+        - instanceNames
       properties:
         instanceNames:
           title: EC2 Instance Name

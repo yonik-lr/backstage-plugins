@@ -43,10 +43,13 @@ const SelectFieldFromApi = (
   const optionsConfig = uiSchema?.['ui:options'] as SelectFieldFromApiOptions | undefined;
   const backendBaseUrl = configApi.getOptionalString('backend.baseUrl') || 'http://localhost:7007';
 
-  // Get the watched field value from form data
+  // Get the watched field value from form data for filtering
   const watchedFieldValue = optionsConfig?.filterBy?.watchField 
     ? formContext?.formData?.[optionsConfig.filterBy.watchField]
     : undefined;
+
+  // Get envType from form data to pass as query parameter
+  const envType = formContext?.formData?.envType;
 
   console.log('SelectFieldFromApi: Component rendered', { 
     optionsConfig, 
@@ -73,6 +76,13 @@ const SelectFieldFromApi = (
         // If path starts with /, use it as-is, otherwise prepend /api/
         const path = `/api/${optionsConfig.path}`;
         const url = new URL(`${backendBaseUrl}${path}`);
+        
+        // Add envType as query parameter if available
+        if (envType) {
+          url.searchParams.set('envType', envType);
+        }
+        
+        // Add any additional params from config
         if (optionsConfig.params) {
           Object.entries(optionsConfig.params).forEach(([key, value]) => {
             url.searchParams.set(key, value);
@@ -190,7 +200,7 @@ const SelectFieldFromApi = (
     };
 
     fetchOptions();
-  }, [optionsConfig, backendBaseUrl, watchedFieldValue]);
+  }, [optionsConfig, backendBaseUrl, watchedFieldValue, envType]);
 
   const title = optionsConfig?.title || (schema.title as string) || 'Select Option';
   const description = optionsConfig?.description || (schema.description as string);

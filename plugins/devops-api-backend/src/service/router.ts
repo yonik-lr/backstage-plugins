@@ -26,12 +26,17 @@ export async function createRouter(
     response.json({ status: 'ok' });
   });
 
-  router.get('/data', async (_request, response) => {
+  router.get('/data', async (request, response) => {
     try {
-      // Build the URL with the env parameter as a query parameter
-      const endpoint = `/latest/envs/${env}/ec2/instances`;
-      const fullUrl = `${devopsApiBaseUrl}${endpoint}?env=${env}`;
-      logger.info(`Fetching data from DevOps API at ${fullUrl}`);
+      // Get envType from query parameters, request body, or config default
+      const envType = request.query.envType as string || 
+                     request.body?.envType || 
+                     env;
+      
+      // Build the URL with the env parameter
+      const endpoint = `/latest/envs/${envType}/ec2/instances`;
+      const fullUrl = `${devopsApiBaseUrl}${endpoint}?env=${envType}`;
+      logger.info(`Fetching data from DevOps API at ${fullUrl} for env: ${envType}`);
       
       // Make GET request to the DevOps API
       const apiResponse = await fetch(fullUrl, {
