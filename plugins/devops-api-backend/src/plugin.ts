@@ -18,10 +18,6 @@ export const devopsApiBackendPlugin = createBackendPlugin({
         httpRouter.use(router);
         // Allow unauthenticated access to the endpoints
         httpRouter.addAuthPolicy({
-          path: '/health',
-          allow: 'unauthenticated',
-        });
-        httpRouter.addAuthPolicy({
           path: '/data',
           allow: 'unauthenticated',
         });
