@@ -1,0 +1,307 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: devops-api-wrapper
+  title: On demand environments
+  description: Temporary environment in stage k8s cluster
+spec:
+  owner: devops
+  type: service
+
+  parameters:
+    - title: Basic Configuration
+      description: Configure the basic environment settings
+      required:
+        - envName
+        - envDb
+        - deploymentType
+        - ttl
+      properties:
+        envName:
+          title: Environment Name
+          type: string
+          description: The name of your on-demand environment.
+          default: yoni-backstage
+          ui:autofocus: true
+          ui:options:
+            rows: 1
+        envDb:
+          title: Database Type
+          type: string
+          description: Select the database type for this environment
+          default: db-local
+          enum:
+            - db-local
+            - rds
+          enumNames:
+            - Local Database
+            - RDS Database (External)
+        deploymentType:
+          title: Deployment Type
+          type: string
+          description: Select the deployment type
+          default: saas
+          enum:
+            - saas
+            - single-tenant
+            - on-prem
+          enumNames:
+            - SaaS
+            - Single Tenant
+            - On-Premise
+        ttl:
+          title: Time To Live (TTL)
+          type: string
+          description: How long should this environment exist before automatic cleanup
+          default: 1h
+          enum:
+            - 1h
+            - 2h
+            - 4h
+            - 8h
+          enumNames:
+            - 1 Hour
+            - 2 Hours
+            - 4 Hours
+            - 8 Hours
+    - title: Image & Chart Configuration
+      description: Configure the container images and Helm chart source
+      required:
+        - imageTag
+        - chartSource
+        - githubBranch
+        - pathToChartFolder
+      properties:
+        oneImageTag:
+          title: Use Single Image Tag
+          type: boolean
+          description: Apply the same image tag to all components
+          default: true
+        imageTag:
+          title: Image Tag
+          type: string
+          description: The container image tag to use (e.g., 1.74.0-release.9e9887f587)
+          default: 1.74.0-release.9e9887f587
+          ui:autofocus: true
+        chartSource:
+          title: Chart Source
+          type: string
+          description: Where to source the Helm chart from
+          enum:
+            - helm-repo
+            - github-branch
+          enumNames:
+            - Helm Repository
+            - GitHub Branch
+          default: github-branch
+        githubBranch:
+          title: GitHub Branch
+          type: string
+          description: The GitHub branch containing the chart (only used if Chart Source is 'GitHub Branch')
+          default: main
+          ui:options:
+            dependsOn: chartSource
+        pathToChartFolder:
+          title: Path to Chart Folder
+          type: string
+          description: Path to the chart folder within the repository
+          default: chart
+    - title: Advanced Configuration (values.yaml)
+      description: Review and customize the Helm values.yaml. The environment name will be automatically injected into the configuration.
+      properties:
+        valuesYaml:
+          title: Helm Values Configuration
+          type: string
+          description: |
+            Customize the Helm values.yaml for your deployment.
+            Note: The environment name you specified will automatically replace placeholders in the 'name' and 'lightrun_endpoint' fields.
+          ui:field: ValuesYamlWithEnvName
+          ui:options:
+            rows: 20
+            watchField: envName
+          default: |
+            deployments:
+              artifacts:
+                image:
+                  repository: lightruncom/artifacts-internal
+                  tag: __IMAGE_TAG__
+              backend:
+                annotations:
+                  prometheus.io/path: /management/prometheus
+                  prometheus.io/port: '8080'
+                  prometheus.io/scrape: 'true'
+                artifacts: __ARTIFACTS_CONFIG__
+                dogfood: false
+                extraEnvs:
+                - name: _JAVA_OPTIONS
+                  value: -Xmx3500m -Xms2G
+                - name: CREATE_DEFAULT_USERS
+                  value: 'true'
+                image:
+                  repository: lightruncom/server-internal
+                  tag: __IMAGE_TAG__
+                initContainers:
+                  p12_creator:
+                    image:
+                      repository: lightruncom/chart-helper-internal
+                  wait_for_keycloak:
+                    image:
+                      repository: lightruncom/chart-helper-internal
+                  wait_for_rabbitmq:
+                    image:
+                      repository: lightruncom/chart-helper-internal
+                resources:
+                  cpu: 2000m
+                  memory: 3840Mi
+              crons:
+                image:
+                  repository: lightruncom/server-internal
+                  tag: __IMAGE_TAG__
+              data_streamer:
+                image:
+                  repository: lightruncom/data-streamer-internal
+                podAnnotations:
+                  prometheus.io/path: /metrics
+                  prometheus.io/port: '8080'
+                  prometheus.io/scrape: 'true'
+                replicas: 1
+                resources:
+                  cpu: 250m
+                  memory: 256Mi
+              frontend:
+                image:
+                  repository: lightruncom/webapp-internal
+                  tag: __IMAGE_TAG__
+                resources:
+                  cpu: 250m
+                  memory: 256Mi
+              keycloak:
+                annotations:
+                  prometheus.io/path: /auth/metrics
+                  prometheus.io/port: '9080'
+                  prometheus.io/scrape: 'true'
+                extraEnvs:
+                - name: _JAVA_OPTIONS
+                  value: -Xmx1500m -Xms1500m
+                image:
+                  repository: lightruncom/keycloak-internal
+                  tag: __IMAGE_TAG__
+                initContainers:
+                  cluster_cert:
+                    image:
+                      repository: lightruncom/chart-helper-internal
+                  wait_for_rabbitmq:
+                    image:
+                      repository: lightruncom/chart-helper-internal
+                resources:
+                  cpu: 1000m
+                  memory: 1792Mi
+              mysql:
+                resources:
+                  cpu: 500m
+                  memory: 768Mi
+              rabbitmq:
+                image:
+                  repository: lightruncom/rabbitmq-internal
+                initContainers:
+                  rabbitmq_config:
+                    image:
+                      repository: lightruncom/chart-helper-internal
+                replicas: 1
+                resources:
+                  cpu: 500m
+                  memory: 768Mi
+                statefulset:
+                  annotations:
+                    prometheus.io/path: /metrics
+                    prometheus.io/port: '15692'
+                    prometheus.io/scrape: 'true'
+              redis:
+                image:
+                  repository: lightruncom/redis-internal
+                resources:
+                  cpu: 500m
+                  memory: 768Mi
+              router:
+                image:
+                  repository: lightruncom/router-internal
+                replicas: 1
+                resources:
+                  cpu: 250m
+                  memory: 256Mi
+            general:
+              data_streamer:
+                enabled: true
+              db_database: __DB_DATABASE__
+              db_endpoint: stage-db.stage.lightrun.com
+              db_local: __DB_LOCAL__
+              deploy_secrets: false
+              deployment_type: __DEPLOYMENT_TYPE__
+              lightrun_endpoint: __ENV_NAME__-ondemand-env.internal.lightrun.com
+              mq:
+                enabled: true
+                metrics: false
+                persistentVolumeClaimRetentionPolicy:
+                  whenDeleted: Delete
+                storage: '0'
+                storageClassName: gp3
+              name: __ENV_NAME__-ondemand-env
+              nodeSelector:
+                purpose: spot-ondemand-envs
+              rabbitmq:
+                enabled: false
+                storage: '0'
+                storageClassName: gp3
+              router:
+                acl:
+                  auth_admin:
+                    deny_ips: []
+                  metrics:
+                    deny_ips: []
+                enabled: true
+                ingress:
+                  annotations:
+                    nginx.ingress.kubernetes.io/proxy-body-size: 10m
+                    nginx.ingress.kubernetes.io/proxy-read-timeout: '90'
+              statefulset:
+                enabled: true
+                persistentVolumeClaimRetentionPolicy:
+                  whenDeleted: Delete
+                storageSize: 10Gi
+              tolerations:
+              - effect: NoSchedule
+                key: purpose
+                operator: Equal
+                value: spot-ondemand-envs
+
+  steps:
+    - id: log-message
+      name: Log Message
+      action: debug:log
+      input:
+        message: Created the manifest for the ${{ parameters.envName }} on demand environment.
+    - id: call-ondemand-env-api
+      name: On demand env
+      action: http:backstage:request
+      input:
+        method: 'POST'
+        path: '/ondemand-env/create'
+        headers:
+          content-type: 'application/json'
+        body:
+          envName: ${{ parameters.envName }}
+          envDb: ${{ parameters.envDb }}
+          oneImageTag: ${{ parameters.oneImageTag }}
+          imageTag: ${{ parameters.imageTag }}
+          deploymentType: ${{ parameters.deploymentType }}
+          chartSource: ${{ parameters.chartSource }}
+          githubBranch: ${{ parameters.githubBranch }}
+          pathToChartFolder: ${{ parameters.pathToChartFolder }}
+          ttl: ${{ parameters.ttl }}
+          valuesYaml: ${{ parameters.valuesYaml }}
+
+  output:
+    text:
+      - title: Result
+        content: |
+          DevOps request submitted successfully.

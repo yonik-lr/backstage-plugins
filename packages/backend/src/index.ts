@@ -66,6 +66,9 @@ backend.add(import('@backstage/plugin-signals-backend'));
 // devops-api plugin
 backend.add(import('@internal/plugin-devops-api-backend'));
 
+// ondemand-env plugin
+backend.add(import('@internal/plugin-ondemand-env-backend'));
+
 // http request module
 backend.add(import('@roadiehq/scaffolder-backend-module-http-request'));
 

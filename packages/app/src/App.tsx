@@ -12,6 +12,7 @@ import {
 import { ScaffolderPage, scaffolderPlugin } from '@backstage/plugin-scaffolder';
 import { ScaffolderFieldExtensions } from '@backstage/plugin-scaffolder-react';
 import { SelectFieldFromApiExtension } from './components/scaffolder/SelectFieldFromApiExtension';
+import { ValuesYamlWithEnvNameExtension } from './components/scaffolder/ValuesYamlWithEnvNameExtension';
 import { orgPlugin } from '@backstage/plugin-org';
 import { SearchPage } from '@backstage/plugin-search';
 import {
@@ -41,8 +42,9 @@ import { NotificationsPage } from '@backstage/plugin-notifications';
 import { SignalsDisplay } from '@backstage/plugin-signals';
 import { DevOpsApiPage } from '@internal/plugin-devops-api';
 
-// Register the custom field extension with the scaffolder plugin
+// Register the custom field extensions with the scaffolder plugin
 const SelectFieldFromApiFieldExtension = scaffolderPlugin.provide(SelectFieldFromApiExtension);
+const ValuesYamlWithEnvNameFieldExtension = scaffolderPlugin.provide(ValuesYamlWithEnvNameExtension);
 
 const app = createApp({
   apis,
@@ -90,6 +92,7 @@ const routes = (
     <Route path="/create" element={<ScaffolderPage />}>
       <ScaffolderFieldExtensions>
         <SelectFieldFromApiFieldExtension />
+        <ValuesYamlWithEnvNameFieldExtension />
       </ScaffolderFieldExtensions>
     </Route>
     <Route path="/api-docs" element={<ApiExplorerPage />} />

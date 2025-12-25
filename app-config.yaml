@@ -94,6 +94,11 @@ catalog:
         - allow: [Template]
     
     - type: file
+      target: ../../yoni-templates/ondemand-template.yaml
+      rules:
+        - allow: [Template]
+
+    - type: file
       target: ../../yoni-templates/ec2-instance-template.yaml
       rules:
         - allow: [Template]
@@ -133,3 +138,7 @@ permission:
 # DevOps API configuration
 devopsApi:
   baseUrl: http://localhost:8080
+
+# On-demand environment service configuration
+ondemandEnv:
+  serviceUrl: https://ondemand-env-service.internal.lightrun.com
