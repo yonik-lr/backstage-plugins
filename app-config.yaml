@@ -94,12 +94,12 @@ catalog:
         - allow: [Template]
     
     - type: file
-      target: ../../yoni-templates/http-template.yaml
+      target: ../../yoni-templates/ec2-instance-template.yaml
       rules:
         - allow: [Template]
 
     - type: file
-      target: ../../yoni-templates/ec2-instance-template.yaml
+      target: ../../yoni-templates/http-template.yaml
       rules:
         - allow: [Template]
 

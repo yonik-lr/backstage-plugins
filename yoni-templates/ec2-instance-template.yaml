@@ -3,45 +3,54 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: ec2-instance-action
-  title: EC2 Instance Action
-  description: Start or Stop EC2 Instance
+  title: EC2 Instance Management
+  description: Start or stop EC2 instances in your environment.
 spec:
   owner: devops
   type: service
 
   parameters:
-    - title: Action
+    - title: Configuration
+      description: Configure the action and environment for your EC2 instance
       properties:
         action:
-          title: Action
+          title: What would you like to do?
           type: string
           enum:
             - 'start'
             - 'stop'
+          enumNames:
+            - 'Start Instance'
+            - 'Stop Instance'
           default: 'start'
-          description: Choose whether to start or stop the EC2 instance
+          description: Only instances matching the selected action will be shown.
           ui:autofocus: true
           ui:options:
             rows: 1
-    - title: Env Type
-      properties:
         envType:
-          title: Env Type
+          title: Environment
           type: string
           enum:
             - 'stage'
             - 'dev'
             - 'qa'
             - 'stress'
+          enumNames:
+            - 'Stage'
+            - 'Development'
+            - 'QA'
+            - 'Stress'
           default: 'stage'
-          description: The environment type you want to perform the action in
+          description: Select the target environment where the EC2 instance is located
           ui:autofocus: true
           ui:options:
             rows: 1
-    - title: EC2 Instance
+    - title: Instance Selection
       properties:
         instanceNames:
+          title: EC2 Instance Name
           type: string
+          description: Select the EC2 instance from the list.
           ui:autofocus: true
           ui:field: SelectFieldFromApi
           ui:options:
@@ -74,4 +83,3 @@ spec:
     postResponse: '{{ steps.backstage_post_request.output.body }}'
     postCode: '{{ steps.backstage_post_request.output.code }}'
     postHeaders: '{{ steps.backstage_post_request.output.headers }}'
-
